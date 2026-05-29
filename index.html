@@ -436,8 +436,9 @@
         <div class="bcard-label">Clinic Booking</div>
         <h3 class="bcard-title">横浜・新宿・大阪<br>提携クリニック 施術立ち会い</h3>
         <p class="bcard-desc">
-          各提携クリニックでのアシスタント施術立ち会いはこちらからご予約ください。
-          STORESよりご希望の日程をお選びいただけます。
+          専用サイトからアシスタントの立ち会いをご予約ください。<br>
+          ※こちらはアシスタントの立ち会い予約です。クリニックへの予約は別途ご自身でお取りください。<br>
+          ※クリニック利用料とアシスタント立ち会い費用は別々のお支払いとなります。
         </p>
         <div class="tags">
           <span class="tag">横浜</span>
@@ -445,6 +446,21 @@
           <span class="tag">大阪</span>
         </div>
         <a href="https://bibimake-tachiai.stores.jp/reserve/assistants-support" target="_blank" class="btn btn-dark">STORES で予約する <span class="arr">→</span></a>
+
+        <!-- 予約方法動画 -->
+        <div style="margin-top:.8rem;text-align:center;">
+          <button onclick="var v=document.getElementById('storesvideo');v.style.display=v.style.display==='none'?'block':'none';this.textContent=v.style.display==='block'?'▲ 動画を閉じる':'▼ STORESの予約方法を動画で確認する';"
+            style="background:none;border:none;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:.68rem;letter-spacing:.18em;color:var(--deep-rose);text-decoration:underline;padding:.3rem 0;">
+            ▼ STORESの予約方法を動画で確認する
+          </button>
+          <div id="storesvideo" style="display:none;margin-top:.8rem;">
+            <iframe src="https://drive.google.com/file/d/1xciJn4T5df-RpGC0wIuZeZBFNVnyqQHR/preview"
+              width="100%" height="220"
+              style="border:1px solid var(--blush);"
+              allow="autoplay">
+            </iframe>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -533,6 +549,22 @@
       </div>
     </div>
 
+  </div>
+
+  <!-- 予約方法がわからない方へ -->
+  <div style="max-width:580px;margin:2.5rem auto 0;text-align:center;">
+    <p style="font-size:.75rem;line-height:2;color:var(--soft-gray);margin-bottom:1rem;">
+      予約サイトの使い方がわからない方はこちらをご確認ください
+    </p>
+    <button onclick="document.getElementById('howtovideo').style.display='block';this.style.display='none';"
+      class="btn btn-dark" style="max-width:320px;margin:0 auto;border:none;cursor:pointer;width:100%;">
+      予約のやり方を確認する <span class="arr">→</span>
+    </button>
+    <div id="howtovideo" style="display:none;margin-top:1.2rem;">
+      <video controls playsinline style="width:100%;border:1px solid var(--blush);">
+        <source src="立ち合い依頼方法.mp4" type="video/mp4">
+      </video>
+    </div>
   </div>
 </section>
 
