@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIBIMAKE. 立ち会いサポート</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Noto+Serif+JP:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF7F2;
+    --warm: #F5F0E8;
+    --blush: #EDD9C8;
+    --rose: #C9A08A;
+    --deep-rose: #A0705A;
+    --cocoa: #5C3D2E;
+    --charcoal: #2A2220;
+    --gold: #C8A96E;
+    --soft-gray: #8A7D76;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Noto Serif JP', serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 80;
+    background: rgba(42,34,32,0.96);
+    backdrop-filter: blur(12px);
+    padding: 0.9rem 1.4rem;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid rgba(200,169,110,0.12);
+  }
+  .nav-brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem; font-weight: 300;
+    color: var(--cream); letter-spacing: 0.22em;
+  }
+  .nav-links { display:flex; gap:1.4rem; }
+  .nav-links a {
+    font-size: 0.58rem; letter-spacing: 0.28em;
+    color: rgba(250,247,242,0.48); text-decoration:none;
+    text-transform: uppercase; transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  @media(max-width:480px){ .nav-links { display:none; } }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative; min-height: 96vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    overflow: hidden;
+    background: var(--charcoal);
+  }
+  .hero-bg {
+    position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse 80% 60% at 15% 85%, rgba(160,112,90,.38) 0%, transparent 58%),
+      radial-gradient(ellipse 65% 80% at 82% 18%, rgba(92,61,46,.42) 0%, transparent 56%),
+      radial-gradient(ellipse 100% 100% at 50% 50%, #2A2220 38%, #18100E 100%);
+  }
+  .hero-ring {
+    position:absolute; top:50%; left:50%;
+    transform: translate(-50%,-50%);
+    width:500px; height:500px;
+    border:1px solid rgba(200,169,110,.1); border-radius:50%;
+    animation: spin 35s linear infinite;
+  }
+  .hero-ring::before {
+    content:''; position:absolute; inset:32px;
+    border:1px solid rgba(200,169,110,.06); border-radius:50%;
+  }
+  @keyframes spin { to { transform:translate(-50%,-50%) rotate(360deg); } }
+
+  .hero-content {
+    position:relative; z-index:2;
+    text-align:center; padding:2rem 1.5rem;
+  }
+  .hero-eyebrow {
+    font-family:'Cormorant Garamond',serif;
+    font-size:.72rem; letter-spacing:.45em; color:var(--gold);
+    text-transform:uppercase; margin-bottom:1.4rem;
+    opacity:0; animation: fu .7s ease .15s forwards;
+  }
+  .hero-title {
+    font-family:'Cormorant Garamond',serif;
+    font-size: clamp(3.2rem,11vw,5.8rem);
+    font-weight:300; color:var(--cream);
+    line-height:1.06; letter-spacing:.07em;
+    opacity:0; animation: fu .7s ease .3s forwards;
+  }
+  .hero-title em {
+    display:block; font-style:italic;
+    color:var(--rose); font-size:.72em; letter-spacing:.16em;
+  }
+  .hero-sub {
+    margin-top:1.4rem; font-size:.75rem;
+    letter-spacing:.32em; color:rgba(250,247,242,.45);
+    opacity:0; animation: fu .7s ease .5s forwards;
+  }
+  .hero-bar {
+    width:56px; height:1px;
+    background:linear-gradient(to right,transparent,var(--gold),transparent);
+    margin:1.6rem auto 0;
+    opacity:0; animation: fu .7s ease .6s forwards;
+  }
+  .hero-scroll {
+    margin-top:2.6rem;
+    opacity:0; animation: fu .7s ease .9s forwards;
+  }
+  .scroll-line {
+    width:1px; height:56px;
+    background:linear-gradient(to bottom,var(--gold),transparent);
+    margin:0 auto; animation: pulse 2.2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:.25} 50%{opacity:1} }
+  @keyframes fu { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ── SHARED ── */
+  .sec { padding: 4.5rem 1.4rem; }
+  .eyebrow {
+    font-family:'Cormorant Garamond',serif;
+    font-size:.66rem; letter-spacing:.5em; color:var(--gold);
+    text-transform:uppercase; margin-bottom:.6rem;
+  }
+  .sec-title {
+    font-family:'Cormorant Garamond',serif;
+    font-size:clamp(1.9rem,5vw,2.8rem);
+    font-weight:300; color:var(--cocoa); line-height:1.2;
+    margin-bottom:.8rem;
+  }
+  .sec-desc {
+    font-size:.76rem; line-height:2.1;
+    color:var(--soft-gray); max-width:480px;
+  }
+
+  /* ── BOOKING ── */
+  #booking { background: var(--warm); }
+  .booking-head { text-align:center; margin-bottom:3rem; }
+  .booking-head .sec-desc { margin:0 auto; }
+
+  .booking-grid {
+    display:grid; grid-template-columns:1fr;
+    gap:1.4rem; max-width:760px; margin:0 auto;
+  }
+  @media(min-width:640px){
+    .booking-grid { grid-template-columns:1fr 1fr; }
+  }
+
+  .bcard {
+    background:var(--cream);
+    border:1px solid var(--blush); border-radius:1px;
+    overflow:hidden; position:relative;
+    transition: box-shadow .4s;
+  }
+  .bcard::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(to right,var(--rose),var(--gold));
+    transform:scaleX(0); transition:transform .4s;
+  }
+  .bcard:hover::before { transform:scaleX(1); }
+  .bcard:hover { box-shadow:0 10px 36px rgba(92,61,46,.11); }
+
+  .bcard-inner { padding:2rem 1.8rem 2.2rem; }
+  .bcard-num {
+    font-family:'Cormorant Garamond',serif;
+    font-size:2.8rem; font-weight:300; color:var(--blush);
+    line-height:1; margin-bottom:.4rem;
+  }
+  .bcard-label {
+    font-size:.6rem; letter-spacing:.35em; color:var(--gold);
+    text-transform:uppercase; margin-bottom:.9rem;
+  }
+  .bcard-title {
+    font-size:1rem; font-weight:400;
+    color:var(--cocoa); margin-bottom:.5rem; line-height:1.55;
+  }
+  .bcard-desc {
+    font-size:.73rem; line-height:2;
+    color:var(--soft-gray); margin-bottom:1.4rem;
+  }
+  .tags { display:flex; flex-wrap:wrap; gap:.4rem; margin-bottom:1.5rem; }
+  .tag {
+    font-size:.6rem; letter-spacing:.12em;
+    padding:.25rem .7rem;
+    border:1px solid var(--blush);
+    color:var(--deep-rose);
+  }
+
+  .btn {
+    display:flex; align-items:center; justify-content:center;
+    gap:.7rem; padding:.85rem 1.6rem; width:100%;
+    font-family:'Noto Serif JP',serif;
+    font-size:.68rem; letter-spacing:.22em;
+    text-decoration:none; text-transform:uppercase;
+    transition: all .3s; margin-bottom:.6rem;
+    border:none; cursor:pointer;
+  }
+  .btn-dark { background:var(--cocoa); color:var(--cream); }
+  .btn-dark:hover { background:var(--deep-rose); }
+  .btn-rose { background:var(--deep-rose); color:var(--cream); }
+  .btn-rose:hover { background:var(--cocoa); }
+  .btn-line { background:#06C755; color:#fff; }
+  .btn-line:hover { background:#05b04b; }
+  .btn .arr { transition:transform .3s; }
+  .btn:hover .arr { transform:translateX(4px); }
+
+  /* ── FLOW ── */
+  #flow { background: var(--cream); }
+  .flow-head { text-align:center; margin-bottom:3rem; }
+  .steps { max-width:580px; margin:0 auto; }
+  .step {
+    display:grid; grid-template-columns:56px 1fr;
+    gap:1.4rem; position:relative;
+  }
+  .step:not(:last-child)::after {
+    content:''; position:absolute;
+    left:27px; top:56px; bottom:-2rem;
+    width:1px;
+    background:linear-gradient(to bottom,var(--rose),var(--blush));
+  }
+  .step-n {
+    width:56px; height:56px; flex-shrink:0;
+    border:1px solid var(--rose); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Cormorant Garamond',serif;
+    font-size:1.3rem; color:var(--deep-rose); background:var(--cream);
+  }
+  .step-body { padding:0.6rem 0 2.5rem; }
+  .step-ttl { font-size:.83rem; color:var(--cocoa); margin-bottom:.3rem; font-weight:400; }
+  .step-txt { font-size:.72rem; line-height:2; color:var(--soft-gray); }
+
+  /* ── RULES ── */
+  #rules { background: var(--warm); }
+  .rules-head { text-align:center; margin-bottom:3rem; }
+  .rules-wrap { max-width:680px; margin:0 auto; }
+
+  .rule-group { margin-bottom:2.2rem; padding-left:1.4rem; border-left:2px solid var(--rose); }
+  .rule-group-ttl {
+    font-family:'Cormorant Garamond',serif;
+    font-size:1.05rem; color:var(--cocoa);
+    margin-bottom:.9rem; font-weight:400;
+  }
+  .rule-list { list-style:none; }
+  .rule-list li {
+    font-size:.75rem; line-height:2.1; color:var(--soft-gray);
+    padding:.35rem 0; border-bottom:1px solid var(--blush);
+    display:flex; align-items:flex-start; gap:.7rem;
+  }
+  .rule-list li:last-child { border-bottom:none; }
+  .rule-list li::before { content:'—'; color:var(--rose); flex-shrink:0; }
+
+  .rule-highlight {
+    background:linear-gradient(135deg,var(--cream),var(--blush));
+    border:1px solid var(--rose);
+    padding:1.4rem 1.6rem; margin-top:1.8rem; text-align:center;
+  }
+  .rule-highlight strong {
+    display:block; font-family:'Cormorant Garamond',serif;
+    font-size:1.05rem; color:var(--deep-rose);
+    margin-bottom:.4rem; letter-spacing:.05em;
+  }
+  .rule-highlight p { font-size:.74rem; line-height:2; color:var(--cocoa); }
+
+  /* ── TRIP ── */
+  #trip { background: var(--cream); }
+  .trip-head { text-align:center; margin-bottom:3rem; }
+  .trip-grid {
+    display:grid; grid-template-columns:1fr;
+    gap:1rem; max-width:680px; margin:0 auto;
+  }
+  @media(min-width:540px){ .trip-grid { grid-template-columns:1fr 1fr 1fr; } }
+  .trip-card {
+    padding:1.5rem 1.4rem;
+    border:1px solid var(--blush); background:var(--warm);
+    text-align:center;
+  }
+  .trip-area {
+    font-size:.6rem; letter-spacing:.3em; color:var(--gold);
+    text-transform:uppercase; margin-bottom:.5rem;
+  }
+  .trip-num {
+    font-family:'Cormorant Garamond',serif;
+    font-size:2.4rem; font-weight:300; color:var(--deep-rose);
+    line-height:1;
+  }
+  .trip-unit { font-size:.65rem; color:var(--soft-gray); margin-top:.2rem; }
+  .trip-note { font-size:.68rem; color:var(--soft-gray); line-height:1.8; margin-top:.6rem; }
+
+  /* ── ASSISTANTS ── */
+  #assistants { background: var(--charcoal); padding:4.5rem 1.4rem; }
+  .ast-head { text-align:center; margin-bottom:3rem; }
+  .ast-head .sec-title { color:var(--cream); }
+  .ast-head .sec-desc { color:rgba(250,247,242,.45); margin:0 auto; text-align:center; }
+
+  .ast-grid {
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap:1rem; max-width:800px; margin:0 auto;
+  }
+  @media(min-width:600px){ .ast-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media(min-width:800px){ .ast-grid { grid-template-columns: repeat(5, 1fr); } }
+
+  .ast-card {
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(200,169,110,.14);
+    overflow:hidden; transition:border-color .4s;
+  }
+  .ast-card:hover { border-color:rgba(200,169,110,.38); }
+
+  .ast-img {
+    width:100%; aspect-ratio:3/4; object-fit:cover;
+    display:block; filter:grayscale(15%);
+    transition:filter .4s;
+  }
+  .ast-card:hover .ast-img { filter:grayscale(0%); }
+
+  .ast-info { padding:.8rem 1rem 1rem; }
+  .ast-loc {
+    font-size:.55rem; letter-spacing:.28em;
+    color:var(--gold); text-transform:uppercase; margin-bottom:.2rem;
+  }
+  .ast-name {
+    font-family:'Cormorant Garamond',serif;
+    font-size:1.1rem; font-weight:300; color:var(--cream);
+    margin-bottom:.15rem;
+  }
+  .ast-detail { font-size:.62rem; line-height:1.8; color:rgba(250,247,242,.42); }
+
+  /* ── FOOTER ── */
+  footer {
+    background:var(--charcoal);
+    padding:3rem 1.4rem; text-align:center;
+    border-top:1px solid rgba(200,169,110,.1);
+  }
+  .ft-brand {
+    font-family:'Cormorant Garamond',serif;
+    font-size:1.7rem; font-weight:300; color:var(--cream);
+    letter-spacing:.22em; margin-bottom:.4rem;
+  }
+  .ft-sub { font-size:.6rem; letter-spacing:.32em; color:rgba(250,247,242,.28); text-transform:uppercase; margin-bottom:1.6rem; }
+  .ft-bar { width:50px; height:1px; background:linear-gradient(to right,transparent,var(--gold),transparent); margin:0 auto 1.6rem; }
+  .ft-copy { font-size:.6rem; color:rgba(250,247,242,.22); letter-spacing:.15em; }
+
+  /* ── STICKY ── */
+  .sticky {
+    position:fixed; bottom:1.2rem; right:1.2rem; z-index:90;
+    display:flex; flex-direction:column; gap:.4rem;
+  }
+  .sticky a {
+    display:flex; align-items:center; justify-content:center;
+    gap:.5rem; padding:.7rem 1rem;
+    font-family:'Noto Serif JP',serif;
+    font-size:.6rem; letter-spacing:.18em; text-decoration:none;
+    border-radius:1px; box-shadow:0 4px 18px rgba(0,0,0,.28);
+    transition:transform .2s;
+  }
+  .sticky a:hover { transform:translateY(-2px); }
+  .sticky .s-dark { background:var(--cocoa); color:var(--cream); }
+  .sticky .s-line { background:#06C755; color:#fff; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">BIBIMAKE.</div>
+  <div class="nav-links">
+    <a href="#booking">予約</a>
+    <a href="#flow">流れ</a>
+    <a href="#rules">注意事項</a>
+    <a href="#trip">出張ルール</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-ring"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">BIBIMAKE. Official</div>
+    <h1 class="hero-title">
+      施術立ち会い
+      <em>Assistant Witness</em>
+    </h1>
+    <div class="hero-bar"></div>
+    <p class="hero-sub">アシスタント立ち会いサポート 予約ページ</p>
+    <div class="hero-scroll"><div class="scroll-line"></div></div>
+  </div>
+</div>
+
+<!-- CONDITIONS -->
+<section style="background:var(--charcoal);padding:2.5rem 1.4rem;">
+  <div style="max-width:680px;margin:0 auto;border:1px solid rgba(200,169,110,.3);padding:1.8rem 2rem;">
+    <div style="
+      font-family:'Cormorant Garamond',serif;
+      font-size:1rem; letter-spacing:.15em; color:var(--gold);
+      margin-bottom:1.2rem; text-align:center;
+    ">【立ち合い依頼できる条件】</div>
+    <div style="
+      font-size:.72rem; letter-spacing:.12em; color:var(--rose);
+      margin-bottom:.9rem; text-align:center;
+    ">🏥 クリニックでの立ち合い施術</div>
+    <div style="display:flex;flex-direction:column;gap:.7rem;">
+      <div style="display:flex;align-items:flex-start;gap:.8rem;">
+        <span style="color:var(--gold);font-size:.9rem;flex-shrink:0;">☑</span>
+        <span style="font-size:.76rem;line-height:1.9;color:rgba(250,247,242,.7);">デビューまでの課題をクリアしている</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:.8rem;">
+        <span style="color:var(--gold);font-size:.9rem;flex-shrink:0;">☑</span>
+        <span style="font-size:.76rem;line-height:1.9;color:rgba(250,247,242,.7);">クリニックとの業務委託契約書の記載や手続きが完了している</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING -->
+<section class="sec" id="booking">
+  <div class="booking-head">
+    <div class="eyebrow">Reservation</div>
+    <h2 class="sec-title">予約窓口</h2>
+    <p class="sec-desc">ご希望のエリア・ご状況に合わせて下記よりお申し込みください。</p>
+  </div>
+
+  <div class="booking-grid">
+
+    <div class="bcard">
+      <div class="bcard-inner">
+        <div class="bcard-num">01</div>
+        <div class="bcard-label">Clinic Booking</div>
+        <h3 class="bcard-title">横浜・新宿・大阪<br>提携クリニック 施術立ち会い</h3>
+        <p class="bcard-desc">
+          各提携クリニックでのアシスタント施術立ち会いはこちらからご予約ください。
+          STORESよりご希望の日程をお選びいただけます。
+        </p>
+        <div class="tags">
+          <span class="tag">横浜</span>
+          <span class="tag">新宿</span>
+          <span class="tag">大阪</span>
+        </div>
+        <a href="https://bibimake-tachiai.stores.jp/reserve/assistants-support" target="_blank" class="btn btn-dark">STORES で予約する <span class="arr">→</span></a>
+      </div>
+    </div>
+
+    <div class="bcard">
+      <div class="bcard-inner">
+        <div class="bcard-num">02</div>
+        <div class="bcard-label">Outing / Fukuoka</div>
+        <h3 class="bcard-title">出張・福岡<br>立ち会いのご依頼</h3>
+        <p class="bcard-desc">
+          出張対応エリアおよび福岡エリアでの立ち会いをご希望の方は
+          公式LINEよりご連絡ください。
+          スタッフが日程・詳細をご案内いたします。
+        </p>
+        <div class="tags">
+          <span class="tag">出張（全国）</span>
+          <span class="tag">福岡</span>
+        </div>
+        <a href="https://line.me/R/ti/p/@053vjqgl" target="_blank" class="btn btn-line">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="white" style="flex-shrink:0"><path d="M19.952 11.006C19.952 6.29 15.37 2.5 9.976 2.5S0 6.29 0 11.006c0 4.241 3.761 7.79 8.842 8.463.344.075.814.228.932.524.107.268.07.688.034.959l-.148.904c-.045.269-.21 1.05.92.573 1.13-.478 6.094-3.588 8.315-6.144 1.534-1.681 2.257-3.388 2.257-5.279z"/></svg>
+          公式LINE で問い合わせる <span class="arr">→</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FLOW -->
+<section class="sec" id="flow">
+  <div class="flow-head">
+    <div class="eyebrow">How It Works</div>
+    <h2 class="sec-title">立ち会いを依頼する流れ</h2>
+  </div>
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-n">1</div>
+      <div class="step-body">
+        <div class="step-ttl">LINEを追加 または 予約サイトへ</div>
+        <div class="step-txt">
+          提携クリニック施術立ち会い（横浜・新宿・大阪）は予約サイトから、
+          出張・福岡は立ち会いサポート公式LINEを追加してください。
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-n">2</div>
+      <div class="step-body">
+        <div class="step-ttl">サイト予約済み内容もしくは立ち合い希望内容を送信</div>
+        <div class="step-txt">
+          予約サイトで予約済みの方はその内容を、まだの方は希望内容をLINEにてお送りください。
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-n">3</div>
+      <div class="step-body">
+        <div class="step-ttl">アシスタントと日程調整・仮予約</div>
+        <div class="step-txt">
+          担当アシスタントとやりとりのうえ仮予約を確定します。
+          指名の場合はアシスタントのスケジュールに合わせてご予約をお願いします。
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-n">4</div>
+      <div class="step-body">
+        <div class="step-ttl">お振込み → 本予約確定</div>
+        <div class="step-txt">
+          立ち会い費用（1部位 ¥11,000）のお振込みが確認でき次第、本予約確定となります。
+          出張の場合は交通費・宿泊費が別途必要です。
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-n">5</div>
+      <div class="step-body">
+        <div class="step-ttl">当日：立ち会いのみ</div>
+        <div class="step-txt">
+          アシスタントによる施術の立ち会いを行います。
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- RULES -->
+<section class="sec" id="rules">
+  <div class="rules-head">
+    <div class="eyebrow">Important Notice</div>
+    <h2 class="sec-title">注意事項</h2>
+  </div>
+  <div class="rules-wrap">
+
+    <div class="rule-group">
+      <div class="rule-group-ttl">💳 料金について</div>
+      <ul class="rule-list">
+        <li>立ち会い費用は <strong>1部位 ¥11,000</strong>（税込）です。</li>
+        <li>お振込みの確認をもって本予約確定となります。</li>
+        <li>出張依頼の場合、立ち会い料に加えてアシスタントの<strong>交通費・宿泊費</strong>が別途必要です。</li>
+      </ul>
+    </div>
+
+    <div class="rule-group">
+      <div class="rule-group-ttl">📋 キャンセル・日程変更について</div>
+      <ul class="rule-list">
+        <li>キャンセルは<strong>基本お受けできません</strong>。ご予約の際は十分にご確認のうえお申し込みください。</li>
+        <li>お振込みの確認をもって本予約確定となります。確定後のご返金はいたしかねます。</li>
+        <li>やむを得ない事情がある場合は、早めに公式LINEよりご相談ください。</li>
+      </ul>
+    </div>
+
+    <div class="rule-highlight">
+      <strong>ご不明な点は添削LINEへ</strong>
+      <p>
+        上記以外でご不明な点がございましたら、<br>
+        BIBI MAKE. 添削LINEよりいつでもお気軽にご連絡ください。
+      </p>
+      <a href="https://line.me/R/ti/p/@762fkxwv" target="_blank"
+         class="btn btn-line" style="max-width:280px;margin:1.2rem auto 0;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M19.952 11.006C19.952 6.29 15.37 2.5 9.976 2.5S0 6.29 0 11.006c0 4.241 3.761 7.79 8.842 8.463.344.075.814.228.932.524.107.268.07.688.034.959l-.148.904c-.045.269-.21 1.05.92.573 1.13-.478 6.094-3.588 8.315-6.144 1.534-1.681 2.257-3.388 2.257-5.279z"/></svg>
+        添削LINE を開く <span class="arr">→</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- TRIP RULES -->
+<section class="sec" id="trip">
+  <div class="trip-head">
+    <div class="eyebrow">Outing Rules</div>
+    <h2 class="sec-title">出張ルール（必要症例数）</h2>
+  </div>
+
+  <!-- 地方出張 強調ブロック -->
+  <div style="max-width:560px;margin:0 auto;">
+    <div style="
+      background:var(--charcoal);
+      border:2px solid var(--gold);
+      padding:2rem 2rem 1.8rem;
+      text-align:center;
+      position:relative;
+    ">
+      <div style="
+        position:absolute; top:-0.9rem; left:50%; transform:translateX(-50%);
+        background:var(--gold); color:var(--charcoal);
+        font-size:.6rem; letter-spacing:.35em; padding:.25rem 1rem;
+        text-transform:uppercase; font-family:'Cormorant Garamond',serif;
+        white-space:nowrap;
+      ">地方出張</div>
+      <div style="
+        font-family:'Cormorant Garamond',serif;
+        font-size:5rem; font-weight:300; color:var(--gold);
+        line-height:1; margin-bottom:.2rem;
+      ">6</div>
+      <div style="font-size:.7rem; letter-spacing:.2em; color:var(--cream); margin-bottom:.8rem;">症例以上から対応可能</div>
+      <div style="
+        width:40px; height:1px;
+        background:linear-gradient(to right,transparent,var(--gold),transparent);
+        margin:0 auto .8rem;
+      "></div>
+      <div style="font-size:.72rem; line-height:2; color:rgba(250,247,242,.55);">
+        交通費・宿泊費は別途ご負担をお願いします
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ASSISTANTS -->
+<section id="assistants" style="display:none;">
+  <div class="ast-head">
+    <div class="eyebrow" style="color:var(--gold);">Our Assistants</div>
+    <h2 class="sec-title">アシスタント紹介</h2>
+    <p class="sec-desc">
+      立ち会いのスケジュールや練習会の詳細は各アシスタントのSNSをご確認ください。<br>
+      ご指名も承っております。
+    </p>
+  </div>
+
+  <div class="ast-grid">
+
+    <div class="ast-card">
+      <img class="ast-img"
+        src="https://lh3.googleusercontent.com/sitesv/AA5AbUC5Jd2-1cR6szA7QhJQ9o45XuG4fDdICZwLXDD7XO2TBBcINwVz3I-z-gof46NUNEZG_7U3CysF1H5jOsFjuLinOkFbWG6VtR8AoMv2afjSL0n_3FkrXD223Ht-xWvCqhAQqSVk4DjKyHLkSVj7lAHbVR1vXqBrc6xq0csHfdvuo3Oi25ZIm23h1sljPyIa87wN2q1JJR5lxwWhRyiITxlrxvHEUgFuSBAy=w1280"
+        alt="RYOKO" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div style="display:none;width:100%;aspect-ratio:3/4;background:rgba(92,61,46,.2);align-items:center;justify-content:center;font-size:.6rem;letter-spacing:.2em;color:rgba(250,247,242,.3);">PHOTO</div>
+      <div class="ast-info">
+        <div class="ast-loc">福岡</div>
+        <div class="ast-name">RYOKO</div>
+        <div class="ast-detail">福岡県在住<br>出張：育児中のため要相談</div>
+      </div>
+    </div>
+
+    <div class="ast-card">
+      <img class="ast-img"
+        src="https://lh3.googleusercontent.com/sitesv/AA5AbUBwH37LPvnw3AsNXahnpkQ-jSMo3IZbtlhhw91FrZ69aDobJWTxDkh19QjetbAaYLlB4afQMoA5xdN12uyciIiV95kyg9qlecCyDMCCfIQmEaVfOKdmgG0kf3K3FnSllp3FCpqCCT9BnbpnTIEhy2GQQFH3tfN7tKvuyJ_vtYjlV-7zdbbGWerkNQD2z6jKFeckZ7U_ctNtebgNd_mrPf-neDAfyOpyv4rc=w1280"
+        alt="SAKI" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div style="display:none;width:100%;aspect-ratio:3/4;background:rgba(92,61,46,.2);align-items:center;justify-content:center;font-size:.6rem;letter-spacing:.2em;color:rgba(250,247,242,.3);">PHOTO</div>
+      <div class="ast-info">
+        <div class="ast-loc">東京</div>
+        <div class="ast-name">SAKI</div>
+        <div class="ast-detail">東京都在住<br>出張：全国対応</div>
+      </div>
+    </div>
+
+    <div class="ast-card">
+      <img class="ast-img"
+        src="https://lh3.googleusercontent.com/sitesv/AA5AbUBKgwL3SAj1NH5lQ3w367bP72eTSN9kKKamgWFPUI_jo-7orP7KzW1BglUq1v1scQjluvdV0OnNJi-KHUG8X0rl6O2i3Jktvg7fnrcu8eff8ChQRYXsmQeoTcHoXnJc_WeXJSgIfttkCejxOAsD4Dax1YEGVblgE6akkXrVQ758H8tBS0uExjTTFdGDZntBt5ask1DwkqRYJTKF1VSst1hu3OCkrxiXD3eL=w1280"
+        alt="KEIKO" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div style="display:none;width:100%;aspect-ratio:3/4;background:rgba(92,61,46,.2);align-items:center;justify-content:center;font-size:.6rem;letter-spacing:.2em;color:rgba(250,247,242,.3);">PHOTO</div>
+      <div class="ast-info">
+        <div class="ast-loc">東京</div>
+        <div class="ast-name">KEIKO</div>
+        <div class="ast-detail">東京都在住<br>出張：全国対応</div>
+      </div>
+    </div>
+
+    <div class="ast-card">
+      <img class="ast-img"
+        src="https://lh3.googleusercontent.com/sitesv/AA5AbUC-Om3I_SsZbWrqRE_Z5YJT-EjSX0BjleBJAvzNITwdsPyGqBRvCHGAwcl9UP37E4Rr6bXtujrGX9bPhKE4wrQmPhQImm7wE_Bm6QB5qFoToWlkUtjzH9aa0ps_292dhz5-a8gUUyrs241Ibr6HNsJtiNppGxe4tCxiJJuU9RZ1wiss_eHcm3NGkN-wvPk80pxAJ8en9mOWTxOVN8AG_A0_fZZUj2-UC-arqt0=w1280"
+        alt="AKAYA" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div style="display:none;width:100%;aspect-ratio:3/4;background:rgba(92,61,46,.2);align-items:center;justify-content:center;font-size:.6rem;letter-spacing:.2em;color:rgba(250,247,242,.3);">PHOTO</div>
+      <div class="ast-info">
+        <div class="ast-loc">大阪</div>
+        <div class="ast-name">AKAYA</div>
+        <div class="ast-detail">大阪府在住<br>出張：全国対応</div>
+      </div>
+    </div>
+
+    <div class="ast-card">
+      <img class="ast-img"
+        src="https://lh3.googleusercontent.com/sitesv/AA5AbUA5VfvEiAeuewwEWKnKAgB3i_OeCNeJ0qRIVCKvy_DM_XbO6_-tcvYop83KZ48lF5HqRE7IH6CCXM-t00TEScAz3BrvWUgkb3dY_Dj1z2DNY1UfktjyZK4HcNcIlibrPKTF1Gc0CqrqnAS6bXjck75RzPgXylBtx72KMCMfsLQp1wpMpl7gEfIkolZbMia_ZbjDBJRtBaAQtvz6yqhWRbKO47V4tfwC=w1280"
+        alt="MIMI" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div style="display:none;width:100%;aspect-ratio:3/4;background:rgba(92,61,46,.2);align-items:center;justify-content:center;font-size:.6rem;letter-spacing:.2em;color:rgba(250,247,242,.3);">PHOTO</div>
+      <div class="ast-info">
+        <div class="ast-loc">東京</div>
+        <div class="ast-name">MIMI</div>
+        <div class="ast-detail">東京都在住<br>出張：全国対応</div>
+      </div>
+    </div>
+
+    <div class="ast-card">
+      <img class="ast-img"
+        src="https://lh3.googleusercontent.com/sitesv/AA5AbUDrgvAGeGV2Zg2k7mw8uezSs-Dfv-8xWS89AlZoYBD8REdqnPR1lSaVYHvmQNeCFeQRPFuLV569mnMxcA5iRfl2JLsoMGlM1yAFafs5bc_FhpRlIA3QLKyqKHKBxWrfv7QcLCq4qxhdpgS7EDhPJSoK1n8Xr7tsNrM3nbQo518w4HOxyY_QZ45Hr5WBSA9NpTinMDsRG4YW4_F8DJ9WsvkSQd_bJAal3plo=w1280"
+        alt="ERI" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div style="display:none;width:100%;aspect-ratio:3/4;background:rgba(92,61,46,.2);align-items:center;justify-content:center;font-size:.6rem;letter-spacing:.2em;color:rgba(250,247,242,.3);">PHOTO</div>
+      <div class="ast-info">
+        <div class="ast-loc">関東</div>
+        <div class="ast-name">ERI</div>
+        <div class="ast-detail">栃木県在住</div>
+      </div>
+    </div>
+
+    <div class="ast-card">
+      <img class="ast-img"
+        src="https://lh3.googleusercontent.com/sitesv/AA5AbUCrhSvqKfIO5oR-BiERke2w0Kzt0sNu5mlUvtxgjmvDcnzqwlh0WsTcAC3bcVTbsJP6rByjGLqbFlLH-5J5SHIU8KPeEm-EIGMtcrwHGcX-K-0stV7tuKFFDREHjfpU4DSUsPcPSckMQ-tnOyPnqTVIVtUv3CAEz9sS7ZUQl5KhqHCQUcm_cYLfg5H-tqJUFlV_xkynrIqmSvc1Z3NyQ6YMb2CHv-u_dLyd=w1280"
+        alt="FUMI" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div style="display:none;width:100%;aspect-ratio:3/4;background:rgba(92,61,46,.2);align-items:center;justify-content:center;font-size:.6rem;letter-spacing:.2em;color:rgba(250,247,242,.3);">PHOTO</div>
+      <div class="ast-info">
+        <div class="ast-loc">福岡</div>
+        <div class="ast-name">FUMI</div>
+        <div class="ast-detail">福岡県在住<br>出張：東京</div>
+      </div>
+    </div>
+
+    <div class="ast-card">
+      <img class="ast-img"
+        src="https://lh3.googleusercontent.com/sitesv/AA5AbUCC5Ss1yULk_cvTuW6EUKn7AgB3i_OeCNeJ0qRIVCKvy_DM_XbO6_-tcvYop83KZ48lF5HqRE7IH6CCXM-t00TEScAz3BrvWUgkb3dY_Dj1z2DNY1UfktjyZK4HcNcIlibrPKTF1Gc0CqrqnAS6bXjck75RzPgXylBtx72KMCMfsLQp1wpMpl7gEfIkolZbMia_ZbjDBJRtBaAQtvz6yqhWRbKO47V4tfwC=w1280"
+        alt="MOE" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div style="display:none;width:100%;aspect-ratio:3/4;background:rgba(92,61,46,.2);align-items:center;justify-content:center;font-size:.6rem;letter-spacing:.2em;color:rgba(250,247,242,.3);">PHOTO</div>
+      <div class="ast-info">
+        <div class="ast-loc">大阪</div>
+        <div class="ast-name">MOE</div>
+        <div class="ast-detail">大阪府在住<br>出張：東京</div>
+      </div>
+    </div>
+
+    <div class="ast-card">
+      <img class="ast-img"
+        src="https://lh3.googleusercontent.com/sitesv/AA5AbUCKYVrgIWIpgcVT4dgpdkMGpceEErLlfaHl5kzMILk61xG_vlUodhFw5jWNKQ9Qx52rAmHfDKO1i3ZX49o8ltEx7kFTOfW3fAPATPjSd5N-ryn48SYnaVEQMxDbJXIoZ2v_SYyysfNO0x9FlPtw4tI--NLNlGk-NsxmZDHNo4mvyGdWRJG_7J_guEyX99BrnPVZZKgeX0_Wr2ZKdfWZjTqTVFz8A6MR-NbduUg=w1280"
+        alt="MIKU" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div style="display:none;width:100%;aspect-ratio:3/4;background:rgba(92,61,46,.2);align-items:center;justify-content:center;font-size:.6rem;letter-spacing:.2em;color:rgba(250,247,242,.3);">PHOTO</div>
+      <div class="ast-info">
+        <div class="ast-loc">神奈川</div>
+        <div class="ast-name">MIKU</div>
+        <div class="ast-detail">神奈川県在住</div>
+      </div>
+    </div>
+
+    <div class="ast-card">
+      <img class="ast-img"
+        src="https://lh3.googleusercontent.com/sitesv/AA5AbUCMqg3Dfs-fb4lTbVYK_qs2Zhcwg5Yq45LPgXmX6xIjLU57MXxGW_PXhEH3OB86udpBLcuGnre5atzwpt_vaGiauZfuHvkB-M3Mu-gpUNNBpGRReWbdew96J3oo9qgDFftkMaz1oREuKB_0eaCrcPQSEiEI2CFDia1zo5QrGrYN8ifJGgHM_-CO3QXxX39K8srWhPNZ8VXTWUKs93rnDiueZitt-YluPQXsWE=w1280"
+        alt="YUKARI" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div style="display:none;width:100%;aspect-ratio:3/4;background:rgba(92,61,46,.2);align-items:center;justify-content:center;font-size:.6rem;letter-spacing:.2em;color:rgba(250,247,242,.3);">PHOTO</div>
+      <div class="ast-info">
+        <div class="ast-loc">東京</div>
+        <div class="ast-name">YUKARI</div>
+        <div class="ast-detail">東京在住</div>
+      </div>
+    </div>
+
+    <!-- 新規追加：SUGUMI -->
+    <div class="ast-card">
+      <div style="width:100%;aspect-ratio:3/4;background:rgba(92,61,46,.2);display:flex;align-items:center;justify-content:center;font-size:.6rem;letter-spacing:.2em;color:rgba(250,247,242,.3);">PHOTO</div>
+      <div class="ast-info">
+        <div class="ast-loc">京都</div>
+        <div class="ast-name">SUGUMI</div>
+        <div class="ast-detail">京都府在住</div>
+      </div>
+    </div>
+
+    <!-- 新規追加：YUUKI -->
+    <div class="ast-card">
+      <div style="width:100%;aspect-ratio:3/4;background:rgba(92,61,46,.2);display:flex;align-items:center;justify-content:center;font-size:.6rem;letter-spacing:.2em;color:rgba(250,247,242,.3);">PHOTO</div>
+      <div class="ast-info">
+        <div class="ast-loc">奈良</div>
+        <div class="ast-name">YUUKI</div>
+        <div class="ast-detail">奈良県在住</div>
+      </div>
+    </div>
+
+    <!-- 新規追加：KEI -->
+    <div class="ast-card">
+      <div style="width:100%;aspect-ratio:3/4;background:rgba(92,61,46,.2);display:flex;align-items:center;justify-content:center;font-size:.6rem;letter-spacing:.2em;color:rgba(250,247,242,.3);">PHOTO</div>
+      <div class="ast-info">
+        <div class="ast-loc">大阪</div>
+        <div class="ast-name">KEI</div>
+        <div class="ast-detail">大阪府在住</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="ft-brand">BIBIMAKE.</div>
+  <div class="ft-sub">Artmake School — Witness Support</div>
+  <div class="ft-bar"></div>
+  <div class="ft-copy">© 2025 BIBIMAKE. All rights reserved.</div>
+</footer>
+
+<div class="sticky">
+  <a href="#booking" class="s-dark">予約する →</a>
+  <a href="https://line.me/R/ti/p/@053vjqgl" target="_blank" class="s-line">LINE →</a>
+</div>
+
+</body>
+</html>
