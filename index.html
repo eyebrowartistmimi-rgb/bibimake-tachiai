@@ -253,9 +253,9 @@
     font-size:.75rem; line-height:2.1; color:var(--soft-gray);
     padding:.35rem 0; border-bottom:1px solid var(--blush);
     display:flex; align-items:flex-start; gap:.7rem;
+    word-break: normal; overflow-wrap: anywhere;
   }
-  .rule-list li:last-child { border-bottom:none; }
-  .rule-list li::before { content:'—'; color:var(--rose); flex-shrink:0; }
+  .rule-list li::before { content:'—'; color:var(--rose); flex-shrink:0; min-width:1em; }
 
   .rule-highlight {
     background:linear-gradient(135deg,var(--cream),var(--blush));
@@ -581,14 +581,14 @@
       <ul class="rule-list">
         <li>立ち会い費用は <strong>1部位 ¥11,000</strong>（税込）です。</li>
         <li>お振込みの確認をもって本予約確定となります。</li>
-        <li>出張依頼の場合、立ち会い料に加えてアシスタントの<strong>交通費・宿泊費</strong>が別途必要です。</li>
+        <li>出張依頼の場合は立ち合い料に加えて交通費・宿泊費が別途必要です。</li>
       </ul>
     </div>
 
     <div class="rule-group">
       <div class="rule-group-ttl">📋 キャンセル・日程変更について</div>
       <ul class="rule-list">
-        <li>キャンセルは<strong>基本お受けできません</strong>。ご予約の際は十分にご確認のうえお申し込みください。</li>
+        <li>キャンセルは<strong>基本お受けできません</strong>。</li>
         <li>お振込みの確認をもって本予約確定となります。確定後のご返金はいたしかねます。</li>
         <li>やむを得ない事情がある場合は、早めに公式LINEよりご相談ください。</li>
       </ul>
