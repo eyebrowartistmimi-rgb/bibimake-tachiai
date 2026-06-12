@@ -369,6 +369,88 @@
 </head>
 <body>
 
+<!-- LINE ポップアップ -->
+<div id="line-popup" style="
+  position:fixed; inset:0; z-index:200;
+  background:rgba(42,34,32,0.82);
+  backdrop-filter:blur(6px);
+  display:flex; align-items:center; justify-content:center;
+  padding:1.4rem;
+">
+  <div style="
+    background:var(--cream);
+    max-width:380px; width:100%;
+    padding:2.4rem 2rem 2rem;
+    text-align:center;
+    position:relative;
+    border-top:3px solid var(--gold);
+  ">
+    <!-- 閉じるボタン -->
+    <button onclick="document.getElementById('line-popup').style.display='none';"
+      style="
+        position:absolute; top:.8rem; right:.8rem;
+        background:none; border:none; cursor:pointer;
+        font-size:1.1rem; color:var(--soft-gray);
+        line-height:1;
+      ">✕</button>
+
+    <!-- ロゴ -->
+    <div style="
+      font-family:'Cormorant Garamond',serif;
+      font-size:1.1rem; letter-spacing:.25em;
+      color:var(--cocoa); margin-bottom:1.4rem;
+    ">BIBI MAKE.</div>
+
+    <!-- LINE アイコン -->
+    <div style="
+      width:60px; height:60px; background:#06C755; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      margin:0 auto 1.2rem;
+    ">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M19.952 11.006C19.952 6.29 15.37 2.5 9.976 2.5S0 6.29 0 11.006c0 4.241 3.761 7.79 8.842 8.463.344.075.814.228.932.524.107.268.07.688.034.959l-.148.904c-.045.269-.21 1.05.92.573 1.13-.478 6.094-3.588 8.315-6.144 1.534-1.681 2.257-3.388 2.257-5.279z"/></svg>
+    </div>
+
+    <div style="
+      font-family:'Cormorant Garamond',serif;
+      font-size:1.3rem; font-weight:300; color:var(--cocoa);
+      margin-bottom:.6rem; line-height:1.4;
+    ">公式LINEを追加してください</div>
+
+    <p style="
+      font-size:.72rem; line-height:2; color:var(--soft-gray);
+      margin-bottom:1.6rem;
+    ">
+      立ち合いの依頼・日程調整はすべて<br>
+      公式LINEにて行っております。<br>
+      まずはLINEの追加をお願いいたします。
+    </p>
+
+    <a href="https://line.me/R/ti/p/@053vjqgl" target="_blank"
+      onclick="setTimeout(()=>document.getElementById('line-popup').style.display='none',500);"
+      style="
+        display:flex; align-items:center; justify-content:center;
+        gap:.6rem; padding:1rem 1.6rem;
+        background:#06C755; color:#fff;
+        text-decoration:none;
+        font-family:'Noto Serif JP',serif;
+        font-size:.72rem; letter-spacing:.2em;
+        margin-bottom:.8rem;
+      ">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M19.952 11.006C19.952 6.29 15.37 2.5 9.976 2.5S0 6.29 0 11.006c0 4.241 3.761 7.79 8.842 8.463.344.075.814.228.932.524.107.268.07.688.034.959l-.148.904c-.045.269-.21 1.05.92.573 1.13-.478 6.094-3.588 8.315-6.144 1.534-1.681 2.257-3.388 2.257-5.279z"/></svg>
+      公式LINEを追加する
+    </a>
+
+    <button onclick="document.getElementById('line-popup').style.display='none';"
+      style="
+        background:none; border:none; cursor:pointer;
+        font-family:'Noto Serif JP',serif;
+        font-size:.65rem; letter-spacing:.18em;
+        color:var(--soft-gray); text-decoration:underline;
+        padding:.4rem;
+      ">すでに追加済みの方はこちら</button>
+  </div>
+</div>
+
 <nav>
   <div class="nav-brand">BIBIMAKE.</div>
   <div class="nav-links">
